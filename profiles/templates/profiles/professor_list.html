@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Professors</title>
+</head>
+<body>
+    <h1>Professors</h1>
+    <form method="get">
+        <label for="department">Filter by Department:</label>
+        <select name="department" id="department" onchange="this.form.submit()">
+            <option value="">All</option>
+            {% for dept in departments %}
+                <option value="{{ dept.id }}" {% if dept.id|stringformat:'s' == selected_department %}selected{% endif %}>{{ dept.name }}</option>
+            {% endfor %}
+        </select>
+    </form>
+    <ul>
+        {% for professor in professors %}
+            <li>
+                <a href="{% url 'professor_detail' professor.id %}">{{ professor.name }}</a> - {{ professor.department.name }}<br>
+                Interests: {{ professor.interests }}
+            </li>
+        {% empty %}
+            <li>No professors found.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

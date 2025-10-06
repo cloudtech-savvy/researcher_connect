@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ professor.name }}</title>
+  </head>
+  <body>
+    <h1>{{ professor.name }}</h1>
+    <p><strong>Department:</strong> {{ professor.department.name }}</p>
+    <p><strong>Email:</strong> {{ professor.email }}</p>
+    <p><strong>Interests:</strong> {{ professor.interests }}</p>
+    <h2>Papers (Database)</h2>
+    <ul>
+      {% for paper in papers %}
+      <li>
+        <strong>{{ paper.title }}</strong> ({{ paper.publication_year }})<br />
+        <a href="{{ paper.url }}" target="_blank">View Paper</a><br />
+        {{ paper.abstract }}
+      </li>
+      {% empty %}
+      <li>No papers found.</li>
+      {% endfor %}
+    </ul>
+
+    {% if scholar_data %}
+    <h2>Live Google Scholar Data</h2>
+    {% if scholar_data.error %}
+    <p style="color: red">
+      Error fetching Google Scholar data: {{ scholar_data.error }}
+    </p>
+    {% else %}
+    <p><strong>Name:</strong> {{ scholar_data.name }}</p>
+    <p><strong>Affiliation:</strong> {{ scholar_data.affiliation }}</p>
+    <p><strong>Interests:</strong> {{ scholar_data.interests|join:', ' }}</p>
+    <p><strong>Citations:</strong> {{ scholar_data.citedby }}</p>
+    <h3>Recent Publications (Live)</h3>
+    <ul>
+      {% for pub in scholar_papers %}
+      <li>
+        <strong>{{ pub.title }}</strong> ({{ pub.year }})<br />
+        <a href="{{ pub.url }}" target="_blank">View Paper</a><br />
+        {{ pub.abstract }}
+      </li>
+      {% empty %}
+      <li>No recent publications found.</li>
+      {% endfor %}
+    </ul>
+    {% endif %} {% endif %}
+
+    <a href="{% url 'professor_list' %}">Back to Professors</a>
+  </body>
+</html>

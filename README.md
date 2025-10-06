@@ -1,0 +1,68 @@
+# Research Connect Platform
+
+A Django-based platform that connects young researchers (students) with senior researchers (professors), specifically focusing on professors from the specifica unversity who have published papers on Google Scholar.
+
+## Features
+
+- **Scrape/Fetch Professor Data:** Uses the `scholarly` package to fetch CUA professors' profiles and papers from Google Scholar.
+- **Rich Metadata:** Stores and displays department, interests, papers, and more.
+- **Department-Based Filtering:** Search and filter professors by department and research interests.
+- **API Endpoints:** RESTful API for accessing professors, papers, and departments.
+- **Browser Views:** User-friendly web interface for students to discover and connect with professors.
+- **Live Google Scholar Data:** Fetches and displays live data from Google Scholar on professor detail pages.
+
+## Setup Instructions
+
+1. **Clone the repository:**
+   ```bash
+   git clone <your-repo-url>
+   cd research_connect
+   ```
+
+2. **Create and activate a virtual environment:**
+   ```bash
+   python -m venv base
+   source base/Scripts/activate  # On Windows
+   ```
+
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   # If needed, install scholarly specifically:
+   pip install scholarly==1.7.11
+   pip install djangorestframework
+   ```
+
+4. **Apply migrations:**
+   ```bash
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
+
+5. **Create a superuser (for admin access):**
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+6. **Run the development server:**
+   ```bash
+   python manage.py runserver
+   ```
+
+7. **Access the platform:**
+   - Professors list: [http://127.0.0.1:8000/professors/](http://127.0.0.1:8000/professors/)
+   - Professor detail: [http://127.0.0.1:8000/professors/<id>/](http://127.0.0.1:8000/professors/1/)
+
+## Usage
+
+- **Add Departments and Professors:** Use the Django admin interface to add departments, professors, and papers.
+- **Fetch Live Data:** On a professor's detail page, live data from Google Scholar will be displayed if a Google Scholar ID is provided.
+- **Search:** Use the browser or API endpoints to search and filter professors by department or research interests.
+
+
+## License
+
+This project is for academic and research purposes only.
+
+
+

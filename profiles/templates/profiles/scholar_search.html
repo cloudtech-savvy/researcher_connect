@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Scholar Search</title>
+</head>
+<body>
+    <h1>Google Scholar Search</h1>
+    <form method="get">
+        <label for="department">Department:</label>
+        <select name="department" id="department">
+            <option value="">All</option>
+            {% for dept in departments %}
+                <option value="{{ dept.name }}" {% if dept.name == selected_department %}selected{% endif %}>{{ dept.name }}</option>
+            {% endfor %}
+        </select>
+        <label for="keyword">Keyword:</label>
+        <input type="text" name="keyword" id="keyword" value="{{ keyword }}" />
+        <button type="submit">Search</button>
+    </form>
+    {% if error %}
+        <p style="color:red;">Error: {{ error }}</p>
+    {% endif %}
+    {% if results %}
+        <h2>Results</h2>
+        {% for author in results %}
+            <div style="border:1px solid #ccc; margin-bottom:1em; padding:1em;">
+                <strong>{{ author.name }}</strong><br>
+                Affiliation: {{ author.affiliation }}<br>
+                Interests: {{ author.interests|join:', ' }}<br>
+                Citations: {{ author.citedby }}<br>
+                <h4>Recent Publications</h4>
+                <ul>
+                    {% for pub in author.publications %}
+                        <li>
+                            <strong>{{ pub.title }}</strong> ({{ pub.year }})<br>
+                            <a href="{{ pub.url }}" target="_blank">View Paper</a><br>
+                            {{ pub.abstract }}
+                        </li>
+                    {% empty %}
+                        <li>No publications found.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% empty %}
+            <p>No authors found.</p>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>
