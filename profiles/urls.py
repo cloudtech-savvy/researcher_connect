@@ -4,5 +4,6 @@ from . import views
 urlpatterns = [
     path('professors/', views.professor_list, name='professor_list'),
     path('professors/<int:pk>/', views.professor_detail, name='professor_detail'),
+    path('tools/import-cua/', views.import_cua_view, name='import_cua_view'),
     path('scholar-search/', views.scholar_search, name='scholar_search'),
 ]

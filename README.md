@@ -60,6 +60,30 @@ A Django-based platform that connects young researchers (students) with senior r
 - **Search:** Use the browser or API endpoints to search and filter professors by department or research interests.
 
 
+## Optional: Use SerpAPI for Google results
+
+You can use SerpAPI to fetch Google Scholar-like search results instead of (or alongside) `scholarly`.
+
+1. Get an API key at https://serpapi.com/ and add it to your environment or the project's `.env` file:
+
+```properties
+SERPAPI_API_KEY="your_serpapi_api_key_here"
+```
+
+2. The project includes a small wrapper at `profiles/services/serp_api.py`. Example usage from Django code:
+
+```python
+from profiles.services.serp_api import SerpAPIClient
+
+client = SerpAPIClient()
+authors = client.search_scholar_authors("Computer Science Catholic University of America", num=10)
+for a in authors:
+   print(a['name'], a.get('affiliation'))
+```
+
+3. You can call this from views or a management command and persist results into the local models. Consider caching and respecting SerpAPI rate limits.
+
+
 ## License
 
 This project is for academic and research purposes only.

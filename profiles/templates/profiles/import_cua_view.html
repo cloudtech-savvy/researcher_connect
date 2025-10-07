@@ -1,0 +1,37 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+  <h1>Import CUA Professors (SerpAPI)</h1>
+  {% if error %}
+    <p style="color: red">Error: {{ error }}</p>
+  {% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <label>Department: <input name="department" value="{{ department }}" /></label><br/>
+    <label>Limit: <input name="limit" value="{{ limit|default:10 }}" /></label><br/>
+    <button type="submit" name="action" value="preview">Preview</button>
+    <button type="submit" name="action" value="persist">Persist</button>
+  </form>
+
+  {% if candidates %}
+    <h2>Candidates ({{ candidates|length }})</h2>
+    <ul>
+      {% for c in candidates %}
+        <li>
+          <strong>{{ c.name }}</strong>
+          {% if c.profile_link %} - <a href="{{ c.profile_link }}" target="_blank">profile</a>{% endif %}
+          <div>{{ c.snippet }}</div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if created %}
+    <h2>Created</h2>
+    <ul>
+      {% for p in created %}
+        <li>{{ p.name }} (id: {{ p.id }})</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+{% endblock %}
