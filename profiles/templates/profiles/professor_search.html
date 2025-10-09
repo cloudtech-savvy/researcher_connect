@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Search Professors by Department</h2>
+<form method="get">
+    <label for="department">Department:</label>
+    <input type="text" name="department" id="department" value="{{ request.GET.department }}">
+    <button type="submit">Search</button>
+</form>
+
+{% if professors %}
+    <h3>Results:</h3>
+    <ul>
+    {% for professor in professors %}
+        <li>
+            <a href="{% url 'professor_detail' professor.id %}">{{ professor.name }}</a> - {{ professor.department.name }}
+        </li>
+    {% endfor %}
+    </ul>
+{% elif request.GET.department %}
+    <p>No professors found for this department.</p>
+{% endif %}
+{% endblock %}

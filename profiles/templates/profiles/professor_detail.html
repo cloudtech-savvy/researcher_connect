@@ -4,16 +4,28 @@
     <title>{{ professor.name }}</title>
   </head>
   <body>
+
     <h1>{{ professor.name }}</h1>
+    {% if professor.profile_photo %}
+      <img src="{{ professor.profile_photo }}" alt="Profile Photo" style="max-width:120px;max-height:120px;"/>
+    {% endif %}
     <p><strong>Department:</strong> {{ professor.department.name }}</p>
     <p><strong>Email:</strong> {{ professor.email }}</p>
+    <p><strong>Affiliation:</strong> {{ professor.affiliation }}</p>
     <p><strong>Interests:</strong> {{ professor.interests }}</p>
+    <p><strong>Citations:</strong> {{ professor.citations }}</p>
+    <p><strong>h-index:</strong> {{ professor.h_index }}</p>
+    <p><strong>i10-index:</strong> {{ professor.i10_index }}</p>
+
     <h2>Papers (Database)</h2>
     <ul>
-      {% for paper in papers %}
+      {% for paper in professor.papers.all %}
       <li>
         <strong>{{ paper.title }}</strong> ({{ paper.publication_year }})<br />
+        <em>Authors:</em> {{ paper.authors }}<br />
+        <em>Journal:</em> {{ paper.journal }}<br />
         <a href="{{ paper.url }}" target="_blank">View Paper</a><br />
+        <em>Citations:</em> {{ paper.citation_count }}<br />
         {{ paper.abstract }}
       </li>
       {% empty %}
@@ -46,6 +58,6 @@
     </ul>
     {% endif %} {% endif %}
 
-    <a href="{% url 'professor_list' %}">Back to Professors</a>
+  <a href="{% url 'professor_search' %}">Back to Professors</a>
   </body>
 </html>

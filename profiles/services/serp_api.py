@@ -10,6 +10,17 @@ SERPAPI_URL = "https://serpapi.com/search"
 
 
 class SerpAPIClient:
+    def fetch_authors_by_ids(self, author_ids: list) -> list:
+        """Fetch author profiles using the google_scholar_author engine for a list of author IDs."""
+        authors = []
+        for author_id in author_ids:
+            params = {"engine": "google_scholar_author", "author_id": author_id}
+            data = self._get(params)
+            if data and 'author' in data:
+                author_info = data['author']
+                author_info['profile_link'] = f"https://scholar.google.com/citations?user={author_id}"
+                authors.append(author_info)
+        return authors
     """Minimal SerpAPI client for Google Scholar-like queries.
 
     Usage:
@@ -51,36 +62,53 @@ class SerpAPIClient:
         return self._get(params)
 
     def search_scholar_authors(self, query: str, num: int = 10) -> List[Dict[str, Any]]:
-        """Search for authors matching the query and return a list of author-like dicts.
-
-        SerpAPI returns `author_results` or similar fields depending on the engine/response. We
-        look for common fields and normalize to a small shape.
-        """
+        """Search for authors matching the query and return a list of author-like dicts, filtering for real people only."""
         data = self.search_scholar(query=query, num=num)
         results: List[Dict[str, Any]] = []
 
-        # SerpAPI scholar responses often include 'author_results' or 'scholar_results'
-        # We'll inspect likely places for author information and normalize.
+        def is_real_person(name, profile_link):
+            if not name or not profile_link:
+                return False
+            n = name.strip()
+            university_names = [
+                'The Catholic University of America',
+                'THE CATHOLIC UNIVERSITY OF AMERICA',
+                'Catholic University of America',
+            ]
+            if n in university_names:
+                return False
+            lowered = n.lower()
+            if any(word in lowered for word in ['university', 'college', 'school', 'institute', 'department', 'faculty', 'center', 'laboratory']):
+                return False
+            if len(n.split()) < 2:
+                return False
+            if n.isupper():
+                return False
+            if len(n) > 50 or any(p in n for p in [':', ',', ';', '(', ')', '–', '—', '"']):
+                return False
+            return True
+
         if not data:
             return results
 
-        # example potential keys: 'author_results', 'scholar_results', 'organic_results'
-        for key in ("author_results", "scholar_results", "organic_results"):  # fallback order
+        for key in ("author_results", "scholar_results", "organic_results"):
             block = data.get(key)
             if not block:
                 continue
             for item in block:
-                author = {
-                    "name": item.get("author") or item.get("title") or item.get("name"),
-                    "affiliation": item.get("affiliation") or item.get("publication") or None,
-                    "profile_link": item.get("profile_link") or item.get("link") or None,
-                    "snippet": item.get("snippet") or item.get("description") or None,
-                    "raw": item,
-                }
-                results.append(author)
+                name = item.get("author") or item.get("title") or item.get("name")
+                profile_link = item.get("profile_link") or item.get("link") or None
+                if is_real_person(name, profile_link):
+                    author = {
+                        "name": name,
+                        "affiliation": item.get("affiliation") or item.get("publication") or None,
+                        "profile_link": profile_link,
+                        "snippet": item.get("snippet") or item.get("description") or None,
+                        "raw": item,
+                    }
+                    results.append(author)
             if results:
                 break
-
         return results
 
     def get_author_profile(self, author_profile_link: str) -> Dict[str, Any]:

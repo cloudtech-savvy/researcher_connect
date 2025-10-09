@@ -1,3 +1,23 @@
+from django.core.paginator import Paginator
+
+def professor_search(request):
+	department = request.GET.get('department', '')
+	professors = Professor.objects.all()
+	if department:
+		professors = professors.filter(department__name__icontains=department)
+	professors = professors.select_related('department')
+	paginator = Paginator(professors, 20)
+	page_number = request.GET.get('page')
+	page_obj = paginator.get_page(page_number)
+	return render(request, 'profiles/professor_search.html', {
+		'professors': page_obj,
+	})
+
+def professor_detail(request, pk):
+	professor = get_object_or_404(Professor.objects.select_related('department').prefetch_related('papers'), pk=pk)
+	return render(request, 'profiles/professor_detail.html', {
+		'professor': professor,
+	})
 from django.shortcuts import render, get_object_or_404
 from .models import Professor, Department, Paper
 from profiles.services.serp_api import SerpAPIClient
